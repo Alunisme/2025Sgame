@@ -4,6 +4,7 @@ let timer = 30; // 30 seconds timer
 let gameOver = false;
 let rank = "";
 let gameStarted = false; // 新增變數，判斷遊戲是否已開始
+let intervalId; // 新增變數來儲存計時器的 ID
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -90,12 +91,20 @@ function startGame() {
   // 開始遊戲
   gameStarted = true;
   resetTarget();
-  setInterval(() => {
+
+  // 清除之前的計時器（如果存在）
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+
+  // 啟動新的計時器
+  intervalId = setInterval(() => {
     if (!gameOver && timer > 0) {
       timer--;
     } else if (timer === 0) {
       gameOver = true;
       calculateRank();
+      clearInterval(intervalId); // 停止計時器
     }
   }, 1000);
 }
@@ -130,5 +139,10 @@ function keyPressed() {
     timer = 30;
     gameOver = false;
     gameStarted = false; // 回到開始畫面
+
+    // 清除計時器（避免多次啟動）
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
   }
 }
